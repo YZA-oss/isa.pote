@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>BrowChantilly · Brownie no Pote</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #fff7f0;  /* base creme suave */
+            font-family: 'Inter', sans-serif;
+            color: #3e2a2a;
+            scroll-behavior: smooth;
+        }
+
+        /* cores principais */
+        :root {
+            --creme: #fef7e6;
+            --creme-escuro: #faeecd;
+            --vermelho: #b13e3e;
+            --vermelho-escuro: #8b2c2c;
+            --branco-chantily: #fffaf5;
+            --detalhe: #d98c5f;
+            --sombra: 0 12px 28px rgba(0, 0, 0, 0.08);
+        }
+
+        /* header fofo mas clean */
+        .top-bar {
+            background: var(--branco-chantily);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #ffded0;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.02);
+        }
+        .logo h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--vermelho);
+            letter-spacing: -0.5px;
+        }
+        .logo p {
+            font-size: 0.75rem;
+            color: #b97f5a;
+            font-weight: 500;
+        }
+        .order-track-badge {
+            background: var(--creme-escuro);
+            padding: 0.4rem 1rem;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #8b3c2c;
+        }
+        .order-track-badge i {
+            margin-right: 6px;
+            color: var(--vermelho);
+        }
+
+        /* container principal */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* grid: cardápio + área de pedido */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+        }
+
+        /* menu/cardapio */
+        .menu-section h2, .cart-section h2, .track-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            border-left: 6px solid var(--vermelho);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.7rem;
+            color: #4b2a2a;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.6rem;
+        }
+        .product-card {
+            background: white;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: var(--sombra);
+            transition: all 0.25s ease;
+            border: 1px solid #ffe3d4;
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px -12px rgba(177, 62, 62, 0.2);
+        }
+        .product-img {
+            background: #fce8db;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: var(--vermelho);
+        }
+        .product-info {
+            padding: 1.2rem 1rem 1rem;
+        }
+        .product-title {
+            font-weight: 800;
+            font-size: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .product-price {
+            color: var(--vermelho);
+            font-weight: 700;
+        }
+        .product-desc {
+            font-size: 0.8rem;
+            color: #7c5a4a;
+            margin: 0.5rem 0 1rem;
+            line-height: 1.3;
+        }
+        .btn-add {
+            background: var(--vermelho);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.6rem 0;
+            width: 100%;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-add:hover {
+            background: var(--vermelho-escuro);
+            transform: scale(0.98);
+        }
+
+        /* área do carrinho / pedido */
+        .cart-section, .track-section {
+            background: var(--branco-chantily);
+            border-radius: 32px;
+            padding: 1.5rem;
+            box-shadow: var(--sombra);
+            margin-bottom: 2rem;
+            border: 1px solid #ffd9ca;
+        }
+        .cart-items {
+            max-height: 320px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.7rem 0;
+            border-bottom: 1px dashed #ffcfbc;
+        }
+        .cart-item-info {
+            font-weight: 500;
+        }
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .qty-btn {
+            background: #f5e2d4;
+            border: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .cart-total {
+            font-weight: 800;
+            font-size: 1.4rem;
+            margin: 1rem 0;
+            text-align: right;
+            border-top: 2px solid #ffd3be;
+            padding-top: 0.8rem;
+        }
+        .btn-checkout {
+            background: var(--vermelho);
+            width: 100%;
+            border: none;
+            padding: 0.9rem;
+            color: white;
+            font-weight: bold;
+            border-radius: 60px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 0.5rem;
+        }
+        .btn-checkout:disabled {
+            background: #d4aa9a;
+            cursor: not-allowed;
+        }
+        .empty-cart {
+            text-align: center;
+            color: #b17a62;
+            padding: 2rem 0;
+        }
+
+        /* area de acompanhar pedido */
+        .track-card {
+            background: #fff4ed;
+            border-radius: 28px;
+            padding: 1rem;
+            margin-top: 0.8rem;
+        }
+        .track-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 1rem 0;
+        }
+        .status-step {
+            text-align: center;
+            flex: 1;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #b18468;
+        }
+        .status-step.active {
+            color: var(--vermelho);
+            font-weight: 700;
+        }
+        .status-step i {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .track-id {
+            font-family: monospace;
+            background: #f7e4d8;
+            padding: 8px 12px;
+            border-radius: 60px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .no-order {
+            text-align: center;
+            padding: 1.2rem;
+            color: #aa7c64;
+        }
+
+        footer {
+            background: var(--creme);
+            text-align: center;
+            padding: 1.8rem;
+            font-size: 0.8rem;
+            color: #956e58;
+            border-top: 1px solid #ffe0d0;
+        }
+
+        @media (max-width: 850px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .top-bar {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        button {
+            font-family: inherit;
+        }
+        .toast-msg {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4b2a2a;
+            color: #fff3e8;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            z-index: 999;
+            opacity: 0;
+            transition: 0.2s;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="logo">
+        <h1>🍫 BrowChantilly</h1>
+        <p>Brownie no pote · feito com chantilly cremoso</p>
+    </div>
+    <div class="order-track-badge">
+        <i class="fas fa-map-marker-alt"></i> Enviamos para todo Brasil · Retirada
+    </div>
+</div>
+
+<div class="container">
+    <div class="dashboard">
+        <!-- COLUDA ESQUERDA: CARDÁPIO -->
+        <div class="menu-section">
+            <h2><i class="fas fa-jar"></i> Nosso cardápio</h2>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+
+        <!-- COLUNA DIREITA: PEDIDO + ACOMPANHAMENTO -->
+        <div>
+            <div class="cart-section">
+                <h2><i class="fas fa-shopping-bag"></i> Seu pedido</h2>
+                <div id="cartContainer">
+                    <!-- carrinho dinâmico -->
+                </div>
+                <button class="btn-checkout" id="checkoutBtn">✨ Finalizar pedido ✨</button>
+            </div>
+
+            <div class="track-section">
+                <h2><i class="fas fa-truck"></i> Acompanhar pedido</h2>
+                <div id="trackArea">
+                    <div class="no-order">
+                        <i class="fas fa-clock"></i> Nenhum pedido ativo.<br>
+                        Faça um pedido para acompanhar!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <i class="fas fa-heart" style="color:#b13e3e;"></i> Brownie no pote com camadas de chantilly e afeto · 
+    cores creme, vermelho e branco
+</footer>
+<div id="toastMsg" class="toast-msg"></div>
+
+<script>
+    // ---------- CARDÁPIO (brownies no pote) ----------
+    const products = [
+        { id: 1, name: "Brownie Clássico", description: "Brownie fudgy + camada de chantilly e raspas", price: 16.90, icon: "🍫", tag: "tradicional" },
+        { id: 2, name: "Chantilly Vermelho", description: "Brownie com calda de frutas vermelhas e chantilly rosê", price: 18.90, icon: "🍓", tag: "especial" },
+        { id: 3, name: "Creme Belga", description: "Brownie branco + chantilly cremoso e crocante", price: 19.90, icon: "🤍", tag: "gourmet" },
+        { id: 4, name: "Duo Chocolate", description: "Brownie meio amargo, cobertura cremosa e chantilly", price: 17.90, icon: "🍫🍫", tag: "intenso" },
+        { id: 5, name: "Pote Festivo", description: "Edição especial com confeitos vermelhos e creme de avelã", price: 22.90, icon: "🎉", tag: "edição" },
+        { id: 6, name: "Mini Brownie + Chantilly", description: "Pequeno mas delicioso, ideal para provar", price: 12.90, icon: "🥄", tag: "mini" }
+    ];
+
+    // Estado do carrinho (pedido atual)
+    let cart = [];  // { id, name, price, quantity }
+
+    // Pedido ativo (após finalizar)
+    let activeOrder = null;   // { orderId, items, total, status, timestamp, estimated }
+
+    // Variáveis para simular progresso do pedido
+    let statusInterval = null;
+
+    // Elementos DOM
+    const productsGrid = document.getElementById("productsGrid");
+    const cartContainer = document.getElementById("cartContainer");
+    const checkoutBtn = document.getElementById("checkoutBtn");
+    const trackArea = document.getElementById("trackArea");
+    const toastMsg = document.getElementById("toastMsg");
+
+    // helper toast
+    function showToast(text, duration = 2500) {
+        toastMsg.innerText = text;
+        toastMsg.style.opacity = "1";
+        setTimeout(() => {
+            toastMsg.style.opacity = "0";
+        }, duration);
+    }
+
+    // Renderizar cardápio
+    function renderProducts() {
+        productsGrid.innerHTML = "";
+        products.forEach(prod => {
+            const card = document.createElement("div");
+            card.className = "product-card";
+            card.innerHTML = `
+                <div class="product-img">${prod.icon}</div>
+                <div class="product-info">
+                    <div class="product-title">
+                        <span>${prod.name}</span>
+                        <span class="product-price">R$ ${prod.price.toFixed(2)}</span>
+                    </div>
+                    <div class="product-desc">${prod.description}</div>
+                    <button class="btn-add" data-id="${prod.id}">
+                        <i class="fas fa-plus-circle"></i> Adicionar
+                    </button>
+                </div>
+            `;
+            const btn = card.querySelector(".btn-add");
+            btn.addEventListener("click", (e) => {
+                e.preventDefault();
+                addToCart(prod.id);
+            });
+            productsGrid.appendChild(card);
+        });
+    }
+
+    // Adicionar ao carrinho
+    function addToCart(productId) {
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+        const existing = cart.find(item => item.id === productId);
+        if (existing) {
+            existing.quantity += 1;
+        } else {
+            cart.push({ id: product.id, name: product.name, price: product.price, quantity: 1 });
+        }
+        renderCart();
+        showToast(`🧁 ${product.name} adicionado ao pedido!`);
+    }
+
+    // Atualizar quantidade
+    function updateQuantity(id, delta) {
+        const idx = cart.findIndex(i => i.id === id);
+        if (idx === -1) return;
+        const newQty = cart[idx].quantity + delta;
+        if (newQty <= 0) {
+            cart.splice(idx, 1);
+        } else {
+            cart[idx].quantity = newQty;
+        }
+        renderCart();
+    }
+
+    // Render carrinho
+    function renderCart() {
+        if (!cartContainer) return;
+        if (cart.length === 0) {
+            cartContainer.innerHTML = `<div class="empty-cart"><i class="fas fa-jar-empty"></i> <br>Seu pedido está vazio. Escolha um brownie!</div>`;
+            checkoutBtn.disabled = true;
+            return;
+        }
+        let itemsHtml = `<div class="cart-items">`;
+        let total = 0;
+        cart.forEach(item => {
+            const subtotal = item.price * item.quantity;
+            total += subtotal;
+            itemsHtml += `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <strong>${item.name}</strong><br>
+                        <span style="font-size:0.75rem;">R$ ${item.price.toFixed(2)}</span>
+                    </div>
+                    <div class="cart-item-qty">
+                        <button class="qty-btn" data-id="${item.id}" data-delta="-1">-</button>
+                        <span style="min-width: 30px; text-align:center;">${item.quantity}</span>
+                        <button class="qty-btn" data-id="${item.id}" data-delta="1">+</button>
+                        <span style="width: 60px; text-align:right;">R$ ${subtotal.toFixed(2)}</span>
+                    </div>
+                </div>
+            `;
+        });
+        itemsHtml += `</div><div class="cart-total">Total: R$ ${total.toFixed(2)}</div>`;
+        cartContainer.innerHTML = itemsHtml;
+        checkoutBtn.disabled = false;
+
+        // adicionar eventos aos botoes de quantidade
+        document.querySelectorAll(".qty-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const id = parseInt(btn.getAttribute("data-id"));
+                const delta = parseInt(btn.getAttribute("data-delta"));
+                updateQuantity(id, delta);
+            });
+        });
+    }
+
+    // Gerar ID do pedido
+    function generateOrderId() {
+        return "BROWN#" + Math.floor(Math.random() * 9000 + 1000) + "-" + new Date().getTime().toString().slice(-4);
+    }
+
+    // Função para finalizar pedido
+    function finalizeOrder() {
+        if (cart.length === 0) {
+            showToast("Adicione brownies ao carrinho antes de finalizar!", 2000);
+            return;
+        }
+
+        // calcula total
+        const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+        const orderId = generateOrderId();
+        const itemsCopy = cart.map(i => ({ ...i }));
+
+        // Criar pedido ativo
+        if (activeOrder) {
+            // Se já houver pedido ativo, cancelar o interval antigo
+            if (statusInterval) clearInterval(statusInterval);
+        }
+
+        activeOrder = {
+            orderId: orderId,
+            items: itemsCopy,
+            total: total,
+            status: "recebido", // recebido -> preparando -> enviado -> entregue
+            timestamp: new Date(),
+            estimated: "30-40 min"
+        };
+
+        // Limpar carrinho após finalizar
+        cart = [];
+        renderCart();
+
+        // Salvar no localStorage para simular persistência (opcional)
+        saveOrderToLocal();
+
+        // Renderizar acompanhamento
+        renderTracking();
+
+        // Iniciar simulação de progresso do pedido (a cada 10 segundos muda status)
+        if (statusInterval) clearInterval(statusInterval);
+        startOrderProgress();
+
+        showToast(`✅ Pedido ${orderId} confirmado! Acompanhe o status abaixo.`);
+    }
+
+    // Simulação do andamento do pedido
+    function startOrderProgress() {
+        if (!activeOrder) return;
+        const statusFlow = ["recebido", "preparando", "enviado", "entregue"];
+        let currentIndex = statusFlow.indexOf(activeOrder.status);
+        if (currentIndex === -1) currentIndex = 0;
+
+        statusInterval = setInterval(() => {
+            if (!activeOrder) {
+                clearInterval(statusInterval);
+                return;
+            }
+            let idx = statusFlow.indexOf(activeOrder.status);
+            if (idx < statusFlow.length - 1) {
+                idx++;
+                activeOrder.status = statusFlow[idx];
+                renderTracking();
+                showToast(`📦 Pedido ${activeOrder.orderId} atualizado: ${getStatusText(activeOrder.status)}`);
+                // se status for entregue, após 5 segundos podemos limpar ou manter
+                if (activeOrder.status === "entregue") {
+                    // para intervalo e deixa como concluído
+                    clearInterval(statusInterval);
+                    statusInterval = null;
+                    // Notificação extra
+                    showToast("🎉 Pedido entregue! Aproveite seu brownie :)", 4000);
+                }
+                saveOrderToLocal();
+            } else {
+                clearInterval(statusInterval);
+                statusInterval = null;
+            }
+        }, 12000); // 12 segundos cada etapa (só para demonstração)
+    }
+
+    function getStatusText(status) {
+        const map = {
+            recebido: "✅ Pedido recebido",
+            preparando: "👩‍🍳 Em preparo - brownie assando na hora",
+            enviado: "🚚 Saiu para entrega",
+            entregue: "🏠 Entregue! Bom apetite"
+        };
+        return map[status] || status;
+    }
+
+    function getStatusIcon(status) {
+        const icons = {
+            recebido: "fa-receipt",
+            preparando: "fa-whisk",
+            enviado: "fa-truck",
+            entregue: "fa-check-circle"
+        };
+        return icons[status] || "fa-clock";
+    }
+
+    // Renderiza o acompanhamento do pedido ativo
+    function renderTracking() {
+        if (!trackArea) return;
+        if (!activeOrder) {
+            trackArea.innerHTML = `<div class="no-order"><i class="fas fa-mug-hot"></i> Nenhum pedido ativo.<br>Faça um pedido para acompanhar!</div>`;
+            return;
+        }
+
+        const statusFlow = ["recebido", "preparando", "enviado", "entregue"];
+        const currentStatus = activeOrder.status;
+        const orderDate = new Date(activeOrder.timestamp);
+        const timeStr = orderDate.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' });
+
+        let stepsHtml = `<div class="track-card">
+            <div class="track-id"><i class="fas fa-hashtag"></i> ${activeOrder.orderId} · ${timeStr}</div>
+            <div style="margin: 12px 0 8px; font-weight: 500;">${activeOrder.items.length} item(ns) — total R$ ${activeOrder.total.toFixed(2)}</div>
+            <div class="track-status">`;
+
+        statusFlow.forEach(step => {
+            let isActive = (statusFlow.indexOf(currentStatus) >= statusFlow.indexOf(step));
+            let stepClass = isActive ? "active" : "";
+            let icon = step === "recebido" ? "fa-receipt" : step === "preparando" ? "fa-whisk" : step === "enviado" ? "fa-truck" : "fa-check-circle";
+            stepsHtml += `<div class="status-step ${stepClass}">
+                            <i class="fas ${icon}"></i>
+                            <span>${step === "recebido" ? "Recebido" : step === "preparando" ? "Preparo" : step === "enviado" ? "Envio" : "Entregue"}</span>
+                         </div>`;
+        });
+
+        stepsHtml += `</div><div style="font-size:0.75rem; background:#ffe3d4; border-radius: 40px; padding: 6px; text-align:center;">
+        <i class="fas fa-hourglass-half"></i> Tempo estimado: ${activeOrder.estimated} • ${getStatusText(currentStatus)}</div>`;
+
+        // Botão para cancelar pedido (apenas se não estiver entregue)
+        if (currentStatus !== "entregue") {
+            stepsHtml += `<button id="cancelOrderBtn" style="margin-top: 12px; background:#f0cfc0; border:none; border-radius: 40px; padding:6px; width:100%; font-weight:500; cursor:pointer;"><i class="fas fa-times-circle"></i> Cancelar pedido</button>`;
+        } else {
+            stepsHtml += `<button id="clearOrderBtn" style="margin-top: 12px; background:#e7cfc2; border:none; border-radius: 40px; padding:6px; width:100%; font-weight:500; cursor:pointer;"><i class="fas fa-trash-alt"></i> Limpar pedido concluído</button>`;
+        }
+
+        trackArea.innerHTML = stepsHtml;
+
+        // eventos dos botões
+        const cancelBtn = document.getElementById("cancelOrderBtn");
+        if (cancelBtn) {
+            cancelBtn.addEventListener("click", () => {
+                if (activeOrder && activeOrder.status !== "entregue") {
+                    if (confirm(`Cancelar pedido ${activeOrder.orderId}?`)) {
+                        if (statusInterval) clearInterval(statusInterval);
+                        activeOrder = null;
+                        saveOrderToLocal();
+                        renderTracking();
+                        showToast("Pedido cancelado. Que tal fazer um novo pedido?", 3000);
+                    }
+                }
+            });
+        }
+        const clearBtn = document.getElementById("clearOrderBtn");
+        if (clearBtn) {
+            clearBtn.addEventListener("click", () => {
+                if (activeOrder && activeOrder.status === "entregue") {
+                    activeOrder = null;
+                    if (statusInterval) clearInterval(statusInterval);
+                    saveOrderToLocal();
+                    renderTracking();
+                    showToast("Pedido removido do histórico. Faça outro pedido!", 2500);
+                }
+            });
+        }
+    }
+
+    // salvar pedido ativo no localStorage (para manter após refresh)
+    function saveOrderToLocal() {
+        if (activeOrder) {
+            localStorage.setItem("brownie_activeOrder", JSON.stringify(activeOrder));
+        } else {
+            localStorage.removeItem("brownie_activeOrder");
+        }
+        // Salvar carrinho também para consistência
+        localStorage.setItem("brownie_cart", JSON.stringify(cart));
+    }
+
+    function loadFromLocal() {
+        const savedOrder = localStorage.getItem("brownie_activeOrder");
+        if (savedOrder) {
+            try {
+                const parsed = JSON.parse(savedOrder);
+                // restaurar datas
+                if (parsed.timestamp) parsed.timestamp = new Date(parsed.timestamp);
+                activeOrder = parsed;
+                // Verificar se o status não está entregue para recriar o intervalo
+                if (activeOrder && activeOrder.status !== "entregue") {
+                    if (statusInterval) clearInterval(statusInterval);
+                    startOrderProgress();
+                } else if (activeOrder && activeOrder.status === "entregue") {
+                    // não iniciar progresso, apenas exibe
+                }
+                renderTracking();
+            } catch(e) {}
+        }
+        const savedCart = localStorage.getItem("brownie_cart");
+        if (savedCart) {
+            try {
+                const parsedCart = JSON.parse(savedCart);
+                if (Array.isArray(parsedCart)) cart = parsedCart;
+                renderCart();
+            } catch(e) {}
+        } else {
+            renderCart();
+        }
+    }
+
+    // Evento finalizar pedido
+    checkoutBtn.addEventListener("click", () => {
+        finalizeOrder();
+    });
+
+    // Inicialização
+    function init() {
+        renderProducts();
+        loadFromLocal();
+        // Se não havia pedido ativo, garantir tracking padrão
+        if (!activeOrder) renderTracking();
+    }
+
+    init();
+</script>
+</body>
+</html>
